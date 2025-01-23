@@ -18,6 +18,7 @@ namespace CarRental3
             builder.Services.AddTransient<IBooking, BookingRepository>();
             builder.Services.AddTransient<ICustomer, CustomerRepository>();
             builder.Services.AddTransient<IUser, UserRepository>();
+            builder.Services.AddTransient<ICar, CarRepository>();
 
             var app = builder.Build();
 

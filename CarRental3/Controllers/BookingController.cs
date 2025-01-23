@@ -53,7 +53,7 @@ namespace CarRental3.Controllers
         // GET: BookingController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            return View(bookingRepository.GetById(id));
         }
 
         // POST: BookingController/Edit/5

@@ -1,6 +1,5 @@
 ﻿using CarRental3.Data;
 using CarRental3.Models;
-using CarRental3.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -55,7 +54,7 @@ namespace CarRental3.Controllers
         public ActionResult Edit(int id)
         {
 
-            return View();
+            return View(administratorRepository.GetById(id));
         }
 
         // POST: AdminController/Edit/5

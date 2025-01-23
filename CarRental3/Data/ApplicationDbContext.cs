@@ -14,5 +14,6 @@ namespace CarRental3.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Booking> Bookings { get; set; }
+        public DbSet<Car> Cars { get; set; }
     }
 }

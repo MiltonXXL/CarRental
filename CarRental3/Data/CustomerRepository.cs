@@ -13,13 +13,13 @@ namespace CarRental3.Data
 
         public void Add(Customer customer)
         {
-            customerRepository.Add(customer);
+            customerRepository.Customers.Add(customer);
             customerRepository.SaveChanges();
         }
 
         public void Delete(Customer customer)
         {
-            customerRepository.Remove(customer);
+            customerRepository.Customers.Remove(customer);
             customerRepository.SaveChanges();
         }
 
@@ -35,7 +35,7 @@ namespace CarRental3.Data
 
         public void Update(Customer customer)
         {
-            customerRepository.Update(customer);
+            customerRepository.Customers.Update(customer);
             customerRepository.SaveChanges();
         }
     }

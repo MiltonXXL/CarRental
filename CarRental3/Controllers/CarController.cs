@@ -5,42 +5,42 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarRental3.Controllers
 {
-    public class UserController : Controller
+    public class CarController : Controller
     {
-        private readonly IUser userRepository;
+        private readonly ICar carRepository;
 
-        public UserController(IUser userRepository)
+        public CarController(ICar carRepository)
         {
-            this.userRepository = userRepository;
+            this.carRepository = carRepository;
         }
-        // GET: UserController
+        // GET: CarController
         public ActionResult Index()
         {
-            return View(userRepository.GetAll());
+            return View(carRepository.GetAll());
         }
 
-        // GET: UserController/Details/5
+        // GET: CarController/Details/5
         public ActionResult Details(int id)
         {
-            return View(userRepository.GetById(id));
+            return View(carRepository.GetById(id));
         }
 
-        // GET: UserController/Create
+        // GET: CarController/Create
         public ActionResult Create()
         {
             return View();
         }
 
-        // POST: UserController/Create
+        // POST: CarController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(User user)
+        public ActionResult Create(Car car)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    userRepository.Add(user);
+                    carRepository.Update(car);
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -50,22 +50,22 @@ namespace CarRental3.Controllers
             }
         }
 
-        // GET: UserController/Edit/5
+        // GET: CarController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View(userRepository.GetById(id));
+            return View(carRepository.GetById(id));
         }
 
-        // POST: UserController/Edit/5
+        // POST: CarController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(User user)
+        public ActionResult Edit(Car car)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    userRepository.Update(user);
+                    carRepository.Update(car);
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -75,20 +75,20 @@ namespace CarRental3.Controllers
             }
         }
 
-        // GET: UserController/Delete/5
+        // GET: CarController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View(userRepository.GetById(id));
+            return View();
         }
 
-        // POST: UserController/Delete/5
+        // POST: CarController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(User user)
+        public ActionResult Delete(Car car)
         {
             try
-            {   
-                userRepository.Delete(user);
+            {
+                carRepository.Delete(car);
                 return RedirectToAction(nameof(Index));
             }
             catch

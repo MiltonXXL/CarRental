@@ -53,7 +53,7 @@ namespace CarRental3.Controllers
         // GET: CustomerController/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            return View(customerRepository.GetById(id));
         }
 
         // POST: CustomerController/Edit/5
@@ -63,7 +63,7 @@ namespace CarRental3.Controllers
         {
             try
             {
-                if (!ModelState.IsValid)
+                if (ModelState.IsValid)
                 {
                     customerRepository.Update(customer);
                 }

@@ -12,13 +12,13 @@ namespace CarRental3.Data
         }
         public void Add(Booking booking)
         {
-            bookingRepository.Add(booking);
+            bookingRepository.Bookings.Add(booking);
             bookingRepository.SaveChanges();
         }
 
         public void Delete(Booking booking)
         {
-            bookingRepository.Remove(booking);
+            bookingRepository.Bookings.Remove(booking);
             bookingRepository.SaveChanges();
         }
 
@@ -34,7 +34,7 @@ namespace CarRental3.Data
 
         public void Update(Booking booking)
         {
-            bookingRepository.Update(booking);
+            bookingRepository.Bookings.Update(booking);
             bookingRepository.SaveChanges();
         }
     }
