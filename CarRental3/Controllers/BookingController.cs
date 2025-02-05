@@ -43,23 +43,34 @@ namespace CarRental3.Controllers
             return View(viewModel); // Skicka rätt ViewModel till vyn
         }
 
-        // GET: BookingController/Create
-        public IActionResult CreateBooking(int carId, int? userId)
+        public IActionResult CreateBooking(int carId, int userId)
         {
-            // Endast inloggade användare kan boka bilar
-            if (HttpContext.Session.GetInt32("UserId") == null)
+            var car = carRepository.GetById(carId);
+            if (car == null)
             {
-                return RedirectToAction("LoginOrRegister", "Auth");
+                return NotFound();
             }
+
+            var user = userRepository.GetById(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var userRole = HttpContext.Session.GetString("UserRole");
 
             var bookingVM = new BookingViewModel
             {
-                CarId = carId,
-                UserId = userId.GetValueOrDefault(),
+                CarId = car.CarId,
+                UserId = user.UserId,
+                Car = car,
+                User = user,
+                ImageUrl = car.ImageUrl,
+                UserRole = userRole,
                 Cars = carRepository.GetAll().Select(c => new SelectListItem
                 {
-                    Value = c.CarId.ToString(), // Detta blir värdet som skickas till formuläret
-                    Text = $"{c.Brand} {c.Model} ({c.YearModel})" // Detta är vad som visas i dropdown-menyn
+                    Value = c.CarId.ToString(),
+                    Text = $"{c.Brand} {c.Model} ({c.YearModel})"
                 }).ToList(),
                 Users = userRepository.GetAll().Select(u => new SelectListItem
                 {
@@ -70,6 +81,7 @@ namespace CarRental3.Controllers
 
             return View(bookingVM);
         }
+
 
 
         // POST: BookingController/Create

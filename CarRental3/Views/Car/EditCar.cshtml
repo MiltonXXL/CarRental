@@ -1,4 +1,4 @@
-﻿@model CarRental3.Models.Car
+﻿@model CarRental3.ViewModels.CarViewModel
 
 @{
     ViewData["Title"] = "Edit Car";
@@ -6,31 +6,56 @@
 
 <h1>Edit Car</h1>
 
-<form asp-action="EditCar" method="post">
-    @Html.AntiForgeryToken()
-    <div class="form-group">
-        <label asp-for="Brand" class="control-label"></label>
-        <input asp-for="Brand" class="form-control" />
-        <span asp-validation-for="Brand" class="text-danger"></span>
+<div class="row">
+    <div class="col-md-4">
+        <img src="@Model.ImageUrl" alt="Car Image" style="width: 100%; height: auto;" />
     </div>
-    <div class="form-group">
-        <label asp-for="Model" class="control-label"></label>
-        <input asp-for="Model" class="form-control" />
-        <span asp-validation-for="Model" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="YearModel" class="control-label"></label>
-        <input asp-for="YearModel" class="form-control" />
-        <span asp-validation-for="YearModel" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="CostPerDay" class="control-label"></label>
-        <input asp-for="CostPerDay" class="form-control" />
-        <span asp-validation-for="CostPerDay" class="text-danger"></span>
-    </div>
+    <div class="col-md-8">
+        <form asp-action="EditCar" method="post">
+            @Html.AntiForgeryToken()
 
-    <input type="hidden" asp-for="CarId" />
-    <div class="form-group">
-        <input type="submit" value="Save" class="btn btn-primary" />
+            <input type="hidden" asp-for="CarId" />
+
+            <div class="form-group">
+                <label asp-for="Brand" class="control-label">Brand</label>
+                <input asp-for="Brand" class="form-control" />
+                <span asp-validation-for="Brand" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Model" class="control-label">Model</label>
+                <input asp-for="Model" class="form-control" />
+                <span asp-validation-for="Model" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="YearModel" class="control-label">Year</label>
+                <input asp-for="YearModel" class="form-control" />
+                <span asp-validation-for="YearModel" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="CostPerDay" class="control-label">Cost Per Day</label>
+                <input asp-for="CostPerDay" class="form-control" />
+                <span asp-validation-for="CostPerDay" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="ImageUrl" class="control-label">Image URL</label>
+                <input asp-for="ImageUrl" class="form-control" />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3">
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
+                <a asp-controller="Admin" asp-action="AdminDashBoard" class="btn btn-secondary">Back to Dashboard</a>
+            </div>
+        </form>
     </div>
-</form>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

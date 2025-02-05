@@ -6,36 +6,51 @@
 
 <h1>Create New Booking</h1>
 
-<form asp-action="CreateBooking" method="post">
-    @Html.AntiForgeryToken()
-
-    <div class="form-group">
-        <label asp-for="CarId" class="control-label">Car</label>
-        <select asp-for="CarId" class="form-control" asp-items="Model.Cars"></select>
-        <span asp-validation-for="CarId" class="text-danger"></span>
+<div class="row">
+    <div class="col-md-4">
+        <img src="@Model.ImageUrl" alt="Car Image" style="width: 100%; height: auto;" />
     </div>
+    <div class="col-md-8">
+        <form asp-action="CreateBooking" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="BookingId" />
+            <input type="hidden" asp-for="UserRole" value="@Model.UserRole" />
 
-    <div class="form-group">
-        <label asp-for="UserId" class="control-label">User</label>
-        <select asp-for="UserId" class="form-control" asp-items="Model.Users"></select>
-        <span asp-validation-for="UserId" class="text-danger"></span>
+            <div class="form-group">
+                <label asp-for="CarId" class="control-label">Car</label>
+                <select asp-for="CarId" class="form-control" asp-items="Model.Cars"></select>
+                <span asp-validation-for="CarId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label">User</label>
+                <select asp-for="UserId" class="form-control" asp-items="Model.Users"></select>
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="StartDate" class="control-label">Start Date</label>
+                <input asp-for="StartDate" class="form-control" type="date" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="EndDate" class="control-label">End Date</label>
+                <input asp-for="EndDate" class="form-control" type="date" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Create Booking" class="btn btn-primary" />
+            </div>
+        </form>
+
+        <a asp-controller="User" asp-action="UserDashBoard" class="btn btn-secondary">Back to Dashboard</a>
     </div>
+</div>
 
-    <div class="form-group">
-        <label asp-for="StartDate" class="control-label">Start Date</label>
-        <input asp-for="StartDate" class="form-control" type="date" />
-        <span asp-validation-for="StartDate" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="EndDate" class="control-label">End Date</label>
-        <input asp-for="EndDate" class="form-control" type="date" />
-        <span asp-validation-for="EndDate" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <input type="submit" value="Create Booking" class="btn btn-primary" />
-    </div>
-</form>
-
-<a asp-controller="User" asp-action="UserDashBoard" class="btn btn-secondary">Back to Dashboard</a>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

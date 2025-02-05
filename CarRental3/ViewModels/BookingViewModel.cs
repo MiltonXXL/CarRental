@@ -21,5 +21,8 @@ namespace CarRental3.ViewModels
 
         public Car Car { get; set; }
         public User User { get; set; }
+
+        public string ImageUrl { get; set; }
+        public string UserRole { get; set; } // Lägg till en egenskap för användarens roll
     }
 }

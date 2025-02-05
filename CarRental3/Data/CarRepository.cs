@@ -13,9 +13,16 @@ namespace CarRental3.Data
         }
         public void Add(Car car)
         {
+            // Om bilen inte har en bild-URL tilldelas en standardbild-URL
+            if (string.IsNullOrEmpty(car.ImageUrl))
+            {
+                car.ImageUrl = "/images/cars/default_car.jpg";  // Ange en standardbild-URL här
+            }
+
             dbContext.Cars.Add(car);
             dbContext.SaveChanges();
         }
+
 
         public void Delete(Car car)
         {

@@ -10,6 +10,7 @@
 <table class="table">
     <thead>
         <tr>
+            <th>Image</th>
             <th>Brand</th>
             <th>Model</th>
             <th>Year</th>
@@ -21,12 +22,15 @@
         @foreach (var car in Model)
         {
             <tr>
+                <td>
+                    <img src="@car.ImageUrl" alt="Car Image" style="width: 100px; height: auto;" />
+                </td>
                 <td>@car.Brand</td>
                 <td>@car.Model</td>
                 <td>@car.YearModel</td>
                 <td>@car.CostPerDay kr</td>
                 <td>
-                    <a asp-controller="Auth" asp-action="LoginOrRegister" asp-route-carId="@car.CarId" asp-route-userId="@userId" class="btn btn-primary">Boka</a>
+                    <a asp-controller="Auth" asp-action="LoginOrRegister" asp-route-carId="@car.CarId" class="btn btn-primary">Boka</a>
                 </td>
             </tr>
         }

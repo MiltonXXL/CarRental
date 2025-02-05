@@ -50,7 +50,8 @@ namespace CarRental3.Controllers
                     Brand = carVM.Brand,
                     Model = carVM.Model,
                     YearModel = carVM.YearModel,
-                    CostPerDay = carVM.CostPerDay
+                    CostPerDay = carVM.CostPerDay,
+                    ImageUrl = !string.IsNullOrEmpty(carVM.ImageUrl) ? carVM.ImageUrl : "/images/cars/default_car.jpg"
                     // Fyll på fler egenskaper här om det behövs
                 };
 
@@ -58,7 +59,7 @@ namespace CarRental3.Controllers
                 carRepository.Add(car);
 
                 // Omdirigera till en vy (t.ex. indexsidan för bilar)
-                return RedirectToAction("Index", "Admin");
+                return RedirectToAction("AdminDashBoard", "Admin");
             }
 
             // Om modellens tillstånd inte är giltigt, visa samma vy igen med det inskickade datat
@@ -89,12 +90,24 @@ namespace CarRental3.Controllers
             {
                 return NotFound();
             }
-            return View(car);
+
+            // Mappa Car-modellen till CarViewModel
+            var carVM = new CarViewModel
+            {
+                CarId = car.CarId,
+                Brand = car.Brand,
+                Model = car.Model,
+                YearModel = car.YearModel,
+                CostPerDay = car.CostPerDay,
+                ImageUrl = car.ImageUrl // Inkludera bild-URL
+            };
+
+            return View(carVM);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditCar(Car car)
+        public IActionResult EditCar(CarViewModel carVM)
         {
             if (HttpContext.Session.GetString("UserRole") != "Admin")
             {
@@ -103,26 +116,31 @@ namespace CarRental3.Controllers
 
             if (ModelState.IsValid)
             {
+                // Hämta bilen från databasen
+                var car = carRepository.GetById(carVM.CarId);
+                if (car == null)
+                {
+                    return NotFound();
+                }
+
+                // Uppdatera bilens egenskaper
+                car.Brand = carVM.Brand;
+                car.Model = carVM.Model;
+                car.YearModel = carVM.YearModel;
+                car.CostPerDay = carVM.CostPerDay;
+                car.ImageUrl = carVM.ImageUrl; // Uppdatera bild-URL
+
+                // Spara ändringarna i databasen genom repositoryt
                 carRepository.Update(car);
+
+                // Omdirigera till AdminDashBoard efter att ha redigerat en bil
                 return RedirectToAction("AdminDashBoard", "Admin");
             }
-            return View(car);
+
+            // Om modellens tillstånd inte är giltigt, visa samma vy igen med det inskickade datat
+            return View(carVM);
         }
 
-        public IActionResult DeleteCar(int id)
-        {
-            if (HttpContext.Session.GetString("UserRole") != "Admin")
-            {
-                return RedirectToAction("AccessDenied", "Home");
-            }
-
-            var car = carRepository.GetById(id);
-            if (car == null)
-            {
-                return NotFound();
-            }
-            return View(car);
-        }
 
         [HttpPost, ActionName("DeleteCarConfirmed")]
         [ValidateAntiForgeryToken]
