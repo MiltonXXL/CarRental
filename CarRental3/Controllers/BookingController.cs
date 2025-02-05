@@ -1,136 +1,280 @@
 ﻿using CarRental3.Data;
 using CarRental3.Models;
 using CarRental3.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRental3.Controllers
 {
+    //[Route("Admin/[controller]/[action]")]
+    //[Authorize(Roles = "Admin")]
     public class BookingController : Controller
     {
         private readonly IBooking bookingRepository;
+        private readonly ICar carRepository;
+        private readonly IUser userRepository;
 
-        // Context tillagt för VM
-        private readonly ApplicationDbContext applicationDbContext;
-        public BookingController(IBooking bookingRepository, ApplicationDbContext applicationDbContext)
+        public BookingController(IBooking bookingRepository, ICar carRepository, IUser userRepository)
         {
             this.bookingRepository = bookingRepository;
-            //Tillagt för VM
-            this.applicationDbContext = applicationDbContext;
+            this.carRepository = carRepository;
+            this.userRepository = userRepository;
         }
-        // GET: BookingController
-        public IActionResult Index()
+        public IActionResult DetailsBooking(int id)
         {
-            var viewModel = new BookingViewModel
-            {
-                Cars = applicationDbContext.Cars.ToList(),
-                Users = applicationDbContext.Users.ToList(),
-                Bookings = bookingRepository.GetAll()
-            };
-            return View(viewModel);
-            // Ändrad till förmån för VM - return View(bookingRepository.GetAll());
-        }
-
-        // GET: BookingController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View(bookingRepository.GetById(id));
-        }
-
-        // GET: BookingController/Create
-        public IActionResult Create()
-        {
-            var cars = applicationDbContext.Cars.ToList();
-            var users = applicationDbContext.Users.ToList();
-
-            if (cars == null || users == null)
+            var booking = bookingRepository.GetById(id); // Hämtar en Booking-modell
+            if (booking == null)
             {
                 return NotFound();
             }
 
-            var viewModel = new BookingFormViewModel
+            // Mappa från Booking till BookingDetailsViewModel
+            var viewModel = new BookingDetailsViewModel
             {
-                Cars = cars,
-                Users = users
+                Booking = booking,
+                User = booking.User,
+                Car = booking.Car
+                // Lägg till alla andra nödvändiga egenskaper från Booking till BookingDetailsViewModel
             };
-            return View(viewModel);
+
+            return View(viewModel); // Skicka rätt ViewModel till vyn
         }
-        
+
+        // GET: BookingController/Create
+        public IActionResult CreateBooking(int carId, int? userId)
+        {
+            // Endast inloggade användare kan boka bilar
+            if (HttpContext.Session.GetInt32("UserId") == null)
+            {
+                return RedirectToAction("LoginOrRegister", "Auth");
+            }
+
+            var bookingVM = new BookingViewModel
+            {
+                CarId = carId,
+                UserId = userId.GetValueOrDefault(),
+                Cars = carRepository.GetAll().Select(c => new SelectListItem
+                {
+                    Value = c.CarId.ToString(), // Detta blir värdet som skickas till formuläret
+                    Text = $"{c.Brand} {c.Model} ({c.YearModel})" // Detta är vad som visas i dropdown-menyn
+                }).ToList(),
+                Users = userRepository.GetAll().Select(u => new SelectListItem
+                {
+                    Value = u.UserId.ToString(),
+                    Text = u.UserName
+                }).ToList()
+            };
+
+            return View(bookingVM);
+        }
+
 
         // POST: BookingController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(BookingFormViewModel viewModel)
+        public IActionResult CreateBooking(BookingViewModel bookingVM)
         {
-            try
+            // Endast inloggade användare kan boka bilar
+            if (HttpContext.Session.GetInt32("UserId") == null)
             {
-                if (ModelState.IsValid)
+                return RedirectToAction("LoginOrRegister", "Auth");
+            }
+
+            // Hämta vald bil och användare från repository baserat på ID
+            var selectedCar = carRepository.GetById(bookingVM.CarId);
+                var selectedUser = userRepository.GetById(bookingVM.UserId);
+
+                if (selectedCar == null || selectedUser == null)
                 {
-                    viewModel.Cars = applicationDbContext.Cars.ToList();
-                    viewModel.Users = applicationDbContext.Users.ToList();
-                    return View(viewModel);
+                    ModelState.AddModelError("", "Invalid car or user selection.");
+                    return View(bookingVM); // Visa formuläret igen om något är fel
                 }
-                var booking = new Booking
+
+                // Skapa en ny bokning med de inskickade värdena
+                var newBooking = new Booking
                 {
-                    CarId = viewModel.CarId,
-                    UserId = viewModel.UserId,
-                    StartDate = viewModel.StartDate,
-                    EndDate = viewModel.EndDate
+                    CarId = bookingVM.CarId,
+                    UserId = bookingVM.UserId,
+                    StartDate = bookingVM.StartDate,
+                    EndDate = bookingVM.EndDate
                 };
-                bookingRepository.Add(booking);
-                return RedirectToAction(nameof(Index));
-            }
 
-            catch
-            {
-                return View();
-            }
+                // Lägg till den nya bokningen till databasen
+                bookingRepository.Add(newBooking);
+
+                // Omdirigera till admin-dashboard eller en annan vy när bokningen har skapats
+                return RedirectToAction("UserDashBoard", "User");
         }
 
-        // GET: BookingController/Edit/5
-        public ActionResult Edit(int id)
+        public IActionResult EditBooking(int id)
         {
-            return View(bookingRepository.GetById(id));
-        }
-
-        // POST: BookingController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(Booking booking)
-        {
-            try
+            var booking = bookingRepository.GetById(id);
+            if (booking == null)
             {
-                if (ModelState.IsValid)
+                return NotFound();
+            }
+
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null || booking.UserId != userId)
+            {
+                return RedirectToAction("AccessDenied", "Home");
+            }
+
+            if (booking.StartDate < DateTime.Now)
+            {
+                ModelState.AddModelError("", "You cannot edit past bookings.");
+                return View("Error");
+            }
+
+            var car = carRepository.GetById(booking.CarId) ?? new Car { Brand = "Unknown Car" };
+            var user = userRepository.GetById(booking.UserId) ?? new User { UserName = "Unknown User" };
+
+            var bookingVM = new BookingViewModel
+            {
+                BookingId = booking.BookingId,
+                CarId = booking.CarId,
+                UserId = booking.UserId,
+                StartDate = booking.StartDate,
+                EndDate = booking.EndDate,
+                Car = car,
+                User = user,
+                Cars = carRepository.GetAll().Select(c => new SelectListItem
                 {
-                    bookingRepository.Update(booking);
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View(booking);
-            }
+                    Value = c.CarId.ToString(),
+                    Text = $"{c.Brand} {c.Model} {c.YearModel}"
+                }).ToList(),
+                Users = userRepository.GetAll().Select(u => new SelectListItem
+                {
+                    Value = u.UserId.ToString(),
+                    Text = u.UserName
+                }).ToList()
+            };
+
+            return View(bookingVM);
         }
 
-        // GET: BookingController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View(bookingRepository.GetById(id));
-        }
 
-        // POST: BookingController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(Booking booking)
+        public IActionResult EditBooking(BookingViewModel bookingVM)
         {
-            try
-            {   bookingRepository.Delete(booking);
-                return RedirectToAction(nameof(Index));
-            }
-            catch
+            var booking = bookingRepository.GetById(bookingVM.BookingId);
+            if (booking == null)
             {
-                return View();
+                return NotFound();
+            }
+
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null || booking.UserId != userId)
+            {
+                return RedirectToAction("AccessDenied", "Home");
+            }
+
+            if (booking.StartDate < DateTime.Now)
+            {
+                ModelState.AddModelError("", "You cannot edit past bookings.");
+                return View("Error");
+            }
+
+            booking.CarId = bookingVM.CarId;
+            booking.UserId = bookingVM.UserId;
+            booking.StartDate = bookingVM.StartDate;
+            booking.EndDate = bookingVM.EndDate;
+
+            bookingRepository.Update(booking);
+
+            // Hämta användaren från användar-ID
+            var user = userRepository.GetById(userId.Value);
+            if (user == null)
+            {
+                return RedirectToAction("LoginOrRegister", "Auth");
+            }
+
+            // Kontrollera om användaren är admin och omdirigera till rätt dashboard
+            if (user.IsAdmin)
+            {
+                return RedirectToAction("AdminDashBoard", "Admin");
+            }
+            else
+            {
+                return RedirectToAction("UserDashBoard", "User");
             }
         }
+
+
+
+
+        [HttpGet]
+        public IActionResult DeleteBooking(int id)
+        {
+            var booking = bookingRepository.GetById(id);
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null || booking.UserId != userId)
+            {
+                return RedirectToAction("AccessDenied", "Home");
+            }
+
+            if (booking.StartDate < DateTime.Now)
+            {
+                ModelState.AddModelError("", "You cannot delete past bookings.");
+                return View("Error");
+            }
+
+            return View(booking);
+        }
+
+        [HttpPost, ActionName("DeleteBooking")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteBookingConfirmed(int bookingId)
+        {
+            var booking = bookingRepository.GetById(bookingId);
+            if (booking == null)
+            {
+                return NotFound();
+            }
+
+            // Kontrollera om bokningen har passerat datumet
+            if (booking.StartDate < DateTime.Now)
+            {
+                ModelState.AddModelError("", "You cannot delete past bookings.");
+                return View("Error");
+            }
+
+            bookingRepository.Delete(booking);
+
+            // Hämta användar-ID från sessionen
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("LoginOrRegister", "Auth");
+            }
+
+            // Hämta användaren från användar-ID
+            var user = userRepository.GetById(userId.Value);
+            if (user == null)
+            {
+                return RedirectToAction("LoginOrRegister", "Auth");
+            }
+
+            // Kontrollera om användaren är admin och omdirigera till rätt dashboard
+            if (user.IsAdmin)
+            {
+                return RedirectToAction("AdminDashBoard", "Admin");
+            }
+            else
+            {
+                return RedirectToAction("UserDashBoard", "User");
+            }
+        }
+
+
     }
 }

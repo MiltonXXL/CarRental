@@ -1,0 +1,66 @@
+﻿@model CarRental3.ViewModels.BookingViewModel
+
+@{
+    ViewData["Title"] = "Edit Booking";
+}
+
+<h1>Edit Booking</h1>
+
+<form asp-action="EditBooking" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" asp-for="BookingId" />
+
+    <div class="form-group">
+        <label class="control-label">Car</label>
+        <select asp-for="CarId" class="form-control" asp-items="Model.Cars"></select>
+        <span asp-validation-for="CarId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label">User</label>
+        <select asp-for="UserId" class="form-control" asp-items="Model.Users"></select>
+        <span asp-validation-for="UserId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StartDate" class="control-label">Start Date</label>
+        <input asp-for="StartDate" class="form-control" type="date" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EndDate" class="control-label">End Date</label>
+        <input asp-for="EndDate" class="form-control" type="date" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mt-3">
+        <input type="submit" value="Save Changes" class="btn btn-primary" />
+        <a asp-controller="Admin" asp-action="AdminDashBoard" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</form>
+
+@if (!string.IsNullOrEmpty(Model.Car.Brand) && !string.IsNullOrEmpty(Model.User.UserName))
+{
+    <div class="mt-4">
+        <h4>Current Booking Details</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">Car</dt>
+            <dd class="col-sm-10">@Model.Car.Brand @Model.Car.Model</dd>
+
+            <dt class="col-sm-2">User</dt>
+            <dd class="col-sm-10">@Model.User.UserName</dd>
+
+            <dt class="col-sm-2">Start Date</dt>
+            <dd class="col-sm-10">@Model.StartDate.ToShortDateString()</dd>
+
+            <dt class="col-sm-2">End Date</dt>
+            <dd class="col-sm-10">@Model.EndDate.ToShortDateString()</dd>
+        </dl>
+    </div>
+}
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

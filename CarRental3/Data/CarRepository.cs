@@ -1,41 +1,49 @@
 ﻿using CarRental3.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRental3.Data
 {
     public class CarRepository : ICar
     {
-        private readonly ApplicationDbContext carRepository;
+        private readonly ApplicationDbContext dbContext;
 
-        public CarRepository(ApplicationDbContext carRepository)
+        public CarRepository(ApplicationDbContext dbContext)
         {
-            this.carRepository = carRepository;
+            this.dbContext = dbContext;
         }
         public void Add(Car car)
         {
-            carRepository.Cars.Add(car);
-            carRepository.SaveChanges();
+            dbContext.Cars.Add(car);
+            dbContext.SaveChanges();
         }
 
         public void Delete(Car car)
         {
-            carRepository.Cars.Remove(car);
-            carRepository.SaveChanges();
+            dbContext.Cars.Remove(car);
+            dbContext.SaveChanges();
         }
 
         public IEnumerable<Car> GetAll()
         {
-            return(carRepository.Cars.OrderBy(c => c.Brand));
+            return(dbContext.Cars.OrderBy(c => c.Brand));
         }
 
         public Car GetById(int id)
         {
-            return (carRepository.Cars.Find(id));
+            return (dbContext.Cars.Find(id));
         }
 
         public void Update(Car car)
         {
-            carRepository.Cars.Update(car);
-            carRepository.SaveChanges();
+            dbContext.Cars.Update(car);
+            dbContext.SaveChanges();
         }
+
+        public bool HasActiveOrFutureBooking(int carId)
+        {
+            var currentDate = DateTime.Now;
+            return dbContext.Bookings.Any(b => b.CarId == carId && b.EndDate >= currentDate);
+        }
+
     }
 }

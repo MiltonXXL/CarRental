@@ -4,39 +4,39 @@ namespace CarRental3.Data
 {
     public class AdministratorRepository : IAdministrator
     {
-        private readonly ApplicationDbContext administratorDbContext;
+        private readonly ApplicationDbContext dbContext;
 
-        public AdministratorRepository(ApplicationDbContext administratorDbContext)
+        public AdministratorRepository(ApplicationDbContext dbContext)
         {
-            this.administratorDbContext = administratorDbContext;
+            this.dbContext = dbContext;
         }
 
         public void Add(Administrator administrator)
         {
-            administratorDbContext.Admins.Add(administrator);
-            administratorDbContext.SaveChanges();
+            dbContext.Admins.Add(administrator);
+            dbContext.SaveChanges();
         }
 
         public void Delete(Administrator administrator)
         {
-            administratorDbContext.Admins.Remove(administrator);
-            administratorDbContext.SaveChanges();
+            dbContext.Admins.Remove(administrator);
+            dbContext.SaveChanges();
         }
 
         public IEnumerable<Administrator> GetAll()
         {
-            return administratorDbContext.Admins.OrderBy(a => a.Name);
+            return dbContext.Admins.OrderBy(a => a.Name);
         }
 
         public Administrator GetById(int id)
         {
-            return administratorDbContext.Admins.Find(id);
+            return dbContext.Admins.Find(id);
         }
 
         public void Update(Administrator administrator)
         {
-            administratorDbContext.Update(administrator);
-            administratorDbContext.SaveChanges();
+            dbContext.Update(administrator);
+            dbContext.SaveChanges();
         }
     }
 }

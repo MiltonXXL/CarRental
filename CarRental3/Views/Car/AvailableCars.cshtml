@@ -1,0 +1,34 @@
+﻿@model IEnumerable<CarRental3.Models.Car>
+
+@{
+    ViewData["Title"] = "Available Cars";
+    var userId = Context.Session.GetInt32("UserId");
+}
+
+<h1>Available Cars</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Brand</th>
+            <th>Model</th>
+            <th>Year</th>
+            <th>Cost per Day</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var car in Model)
+        {
+            <tr>
+                <td>@car.Brand</td>
+                <td>@car.Model</td>
+                <td>@car.YearModel</td>
+                <td>@car.CostPerDay kr</td>
+                <td>
+                    <a asp-controller="Auth" asp-action="LoginOrRegister" asp-route-carId="@car.CarId" asp-route-userId="@userId" class="btn btn-primary">Boka</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -1,5 +1,6 @@
 ﻿using CarRental3.Data;
 using CarRental3.Models;
+using CarRental3.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,93 +9,131 @@ namespace CarRental3.Controllers
     public class UserController : Controller
     {
         private readonly IUser userRepository;
+        private readonly ICar carRepository;
+        private readonly IBooking bookingRepository;
 
-        public UserController(IUser userRepository)
+        public UserController(IUser userRepository, ICar carRepository, IBooking bookingRepository)
         {
             this.userRepository = userRepository;
+            this.carRepository = carRepository;
+            this.bookingRepository = bookingRepository;
         }
         // GET: UserController
         public ActionResult Index()
         {
-            return View(userRepository.GetAll());
-        }
-
-        // GET: UserController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View(userRepository.GetById(id));
-        }
-
-        // GET: UserController/Create
-        public ActionResult Create()
-        {
             return View();
         }
 
-        // POST: UserController/Create
+        public IActionResult UserDashBoard()
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+            if (userId == null)
+            {
+                return RedirectToAction("LoginOrRegister", "Auth");
+            }
+
+            var bookings = bookingRepository.GetByUserId(userId.Value);
+
+            var model = new UserDashBoardViewModel
+            {
+                UserId = userId.Value,
+                Bookings = bookings,
+                Cars = bookingRepository.GetAllCars(), // För att få alla bilar
+                NewBooking = new Booking() // Skapa ett nytt Booking-objekt om det behövs
+            };
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult CreateUser()
+        {
+            // Returnera en vy för att skapa en bil
+            return View();
+        }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(User user)
+        public IActionResult CreateUser(UserViewModel userVM)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                var user = new User
                 {
-                    userRepository.Add(user);
-                }
-                return RedirectToAction(nameof(Index));
+                    UserName = userVM.UserName,
+                    Password = userVM.Password,
+                    IsAdmin = userVM.IsAdmin,
+                };
+                userRepository.Add(user);
+
+                return RedirectToAction("Index", "Admin");
             }
-            catch
-            {
-                return View();
-            }
+
+            // Om modellens tillstånd inte är giltigt, visa samma vy igen med det inskickade datat
+            return View(userVM);
         }
 
-        // GET: UserController/Edit/5
-        public ActionResult Edit(int id)
+        // Metoder för att hantera användare
+        public IActionResult DetailsUser(int id)
         {
-            return View(userRepository.GetById(id));
+            var user = userRepository.GetById(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View(user);
         }
 
-        // POST: UserController/Edit/5
+        public IActionResult EditUser(int id)
+        {
+            var user = userRepository.GetById(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View(user);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(User user)
+        public IActionResult EditUser(User user)
         {
-            try
+            if (ModelState.IsValid)
             {
-                if (ModelState.IsValid)
+                var existingUser = userRepository.GetById(user.UserId);
+                if (existingUser != null)
                 {
-                    userRepository.Update(user);
+                    existingUser.UserName = user.UserName;
+                    existingUser.Password = user.Password;
+                    existingUser.IsAdmin = user.IsAdmin;
+
+                    userRepository.Update(existingUser);
+                    return RedirectToAction("AdminDashBoard", "Admin");
                 }
-                return RedirectToAction(nameof(Index));
+                return NotFound();
             }
-            catch
-            {
-                return View();
-            }
+            return View(user);
         }
 
-        // GET: UserController/Delete/5
-        public ActionResult Delete(int id)
+        public IActionResult DeleteUser(int id)
         {
-            return View(userRepository.GetById(id));
+            var user = userRepository.GetById(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View(user);
         }
 
-        // POST: UserController/Delete/5
-        [HttpPost]
+        [HttpPost, ActionName("DeleteUserConfirmed")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(User user)
+        public IActionResult DeleteUserConfirmed(int UserId)
         {
-            try
-            {   
-                userRepository.Delete(user);
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var user = userRepository.GetById(UserId);
+            userRepository.Delete(user);
+            return RedirectToAction("AdminDashboard", "Admin");
         }
+
     }
 }

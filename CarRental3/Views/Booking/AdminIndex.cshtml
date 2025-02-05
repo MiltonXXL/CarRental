@@ -1,0 +1,34 @@
+﻿@model IEnumerable<CarRental3.ViewModels.BookingViewModel>
+
+<h2>Admin: Manage Bookings</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Booking Id</th>
+            <th>User</th>
+            <th>Car</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model)
+        {
+            <tr>
+                <td>@booking.BookingId</td>
+                <td>@booking.UserId</td>
+                <td>@booking.CarId</td>
+                <td>@booking.StartDate.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@booking.EndDate.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@booking.BookingId" class="btn btn-warning">Edit</a>
+                    <a asp-action="Delete" asp-route-id="@booking.BookingId" class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create" class="btn btn-primary">Create New Booking</a>

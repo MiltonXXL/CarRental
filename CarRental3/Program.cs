@@ -16,9 +16,9 @@ namespace CarRental3
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
             builder.Services.AddTransient<IAdministrator, AdministratorRepository>();
             builder.Services.AddTransient<IBooking, BookingRepository>();
-            builder.Services.AddTransient<ICustomer, CustomerRepository>();
             builder.Services.AddTransient<IUser, UserRepository>();
             builder.Services.AddTransient<ICar, CarRepository>();
+            builder.Services.AddSession();
 
             var app = builder.Build();
 
@@ -35,6 +35,7 @@ namespace CarRental3
 
             app.UseRouting();
 
+            app.UseSession();
             app.UseAuthorization();
 
             app.MapControllerRoute(

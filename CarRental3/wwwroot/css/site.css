@@ -1,22 +1,61 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
-  position: relative;
-  min-height: 100%;
+    position: relative;
+    min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
+}
+
+/* Centrera navigationbaren */
+.navbar {
+    display: flex;
+    justify-content: center;
+    background-color: #f8f9fa; /* Bakgrundsfärg för navigationbaren */
+    padding: 10px; /* Padding för navigationbaren */
+}
+
+.navbar-nav {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    margin: 0 10px;
+}
+
+/* Centrera innehållet */
+.content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+/* Centrera titeln */
+.centered-title {
+    text-align: center;
+}
+
+/* Centrera bilden */
+.centered-image {
+    display: block;
+    margin: 0 auto;
 }

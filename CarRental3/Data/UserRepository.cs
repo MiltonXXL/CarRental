@@ -1,41 +1,52 @@
 ﻿using CarRental3.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRental3.Data
 {
     public class UserRepository : IUser
     {
-        private readonly ApplicationDbContext userRepository;
+        private readonly ApplicationDbContext dbContext;
 
-        public UserRepository(ApplicationDbContext userRepository)
+        public UserRepository(ApplicationDbContext dbContext)
         {
-            this.userRepository = userRepository;
+            this.dbContext = dbContext;
         }
         public void Add(User user)
         {
-            userRepository.Add(user);
-            userRepository.SaveChanges();
+            dbContext.Users.Add(user);
+            dbContext.SaveChanges();
         }
 
         public void Delete(User user)
         {
-            userRepository.Remove(user);
-            userRepository.SaveChanges();
+            dbContext.Users.Remove(user);
+            dbContext.SaveChanges();
         }
 
         public IEnumerable<User> GetAll()
         {
-            return (userRepository.Users.OrderBy(u => u.UserName));
+            return (dbContext.Users.OrderBy(u => u.UserName));
         }
 
         public User GetById(int id)
         {
-            return (userRepository.Users.Find(id));
+            return dbContext.Users.FirstOrDefault(u => u.UserId == id);
+        }
+
+        public User GetByUserNameAndPassword(string userName, string password)
+        {
+            return dbContext.Users.FirstOrDefault(u => u.UserName == userName && u.Password == password);
+        }
+
+        public User GetByUserName(string userName)
+        {
+            return dbContext.Users.FirstOrDefault(u => u.UserName == userName);
         }
 
         public void Update(User user)
         {
-            userRepository.Update(user);
-            userRepository.SaveChanges();
+            dbContext.Users.Update(user);
+            dbContext.SaveChanges();
         }
     }
 }

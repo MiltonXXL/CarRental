@@ -1,0 +1,43 @@
+﻿@model CarRental3.ViewModels.UserDashBoardViewModel
+
+@{
+    ViewData["Title"] = "User Dashboard";
+}
+
+<h1>User Dashboard</h1>
+
+<p>Welcome to your dashboard!</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Car Brand</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var booking in Model.Bookings)
+        {
+            <tr>
+                <td>@booking.Car.Brand</td>
+                <td>@booking.StartDate.ToShortDateString()</td>
+                <td>@booking.EndDate.ToShortDateString()</td>
+                <td>
+                    @if (booking.EndDate >= DateTime.Now)
+                    {
+                        <a asp-controller="Booking" asp-action="EditBooking" asp-route-id="@booking.BookingId" class="btn btn-primary">Edit</a>
+                        <a asp-controller="Booking" asp-action="DeleteBooking" asp-route-id="@booking.BookingId" class="btn btn-danger">Delete</a>
+                    }
+                    else
+                    {
+                        <span class="text-muted">Cannot edit past bookings</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-controller="Car" asp-action="AvailableCars" class="btn btn-success">Create New Booking</a>
