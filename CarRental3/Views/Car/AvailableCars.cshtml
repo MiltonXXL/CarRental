@@ -30,7 +30,14 @@
                 <td>@car.YearModel</td>
                 <td>@car.CostPerDay kr</td>
                 <td>
-                    <a asp-controller="Auth" asp-action="LoginOrRegister" asp-route-carId="@car.CarId" class="btn btn-primary">Boka</a>
+                    @if (userId != null)
+                    {
+                        <a asp-controller="Booking" asp-action="CreateBooking" asp-route-carId="@car.CarId" asp-route-userId="@userId" class="btn btn-primary">Boka</a>
+                    }
+                    else
+                    {
+                        <a asp-controller="Auth" asp-action="LoginOrRegister" asp-route-carId="@car.CarId" class="btn btn-primary">Boka</a>
+                    }
                 </td>
             </tr>
         }

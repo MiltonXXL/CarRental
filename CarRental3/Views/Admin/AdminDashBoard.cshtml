@@ -2,10 +2,10 @@
 
 @{
     ViewData["Title"] = "Admin Dashboard";
+    var userId = Context.Session.GetInt32("UserId");
 }
 
 <h1>Admin Dashboard</h1>
-
 
 @if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
 {
@@ -38,7 +38,11 @@
                 <td>
                     <a asp-controller="User" asp-action="DetailsUser" asp-route-id="@user.UserId" class="btn btn-info">Details</a>
                     <a asp-controller="User" asp-action="EditUser" asp-route-id="@user.UserId" class="btn btn-warning">Edit</a>
-                    <a asp-controller="User" asp-action="DeleteUser" asp-route-id="@user.UserId" class="btn btn-danger">Delete</a>
+                    <form asp-action="DeleteUser" asp-controller="User" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="userId" value="@user.UserId" />
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
                 </td>
             </tr>
         }
@@ -73,7 +77,11 @@
                 <td>
                     <a asp-controller="Car" asp-action="DetailsCar" asp-route-id="@car.CarId" class="btn btn-info">Details</a>
                     <a asp-controller="Car" asp-action="EditCar" asp-route-id="@car.CarId" class="btn btn-warning">Edit</a>
-                    <a asp-controller="Car" asp-action="DeleteCar" asp-route-id="@car.CarId" class="btn btn-danger">Delete</a>
+                    <form asp-action="DeleteCar" asp-controller="Car" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="carId" value="@car.CarId" />
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
                 </td>
             </tr>
         }
@@ -83,7 +91,7 @@
 <!-- Section for Bookings -->
 <h2>Bookings</h2>
 <p>
-    <a asp-controller="Booking" asp-action="CreateBooking" class="btn btn-primary">Create New Booking</a>
+    <a asp-controller="Booking" asp-action="CreateBooking" asp-route-carId="@Model.Cars.First().CarId" asp-route-userId="@userId" class="btn btn-primary">Create New Booking</a>
 </p>
 <table class="table">
     <thead>
@@ -104,9 +112,16 @@
                 <td>@booking.Car.Brand @booking.Car.Model</td>
                 <td>@booking.User.UserName</td>
                 <td>
-                    <a asp-controller="Booking" asp-action="DetailsBooking" asp-route-id="@booking.BookingId" class="btn btn-info">Details</a>
-                    <a asp-controller="Booking" asp-action="EditBooking" asp-route-id="@booking.BookingId" class="btn btn-warning">Edit</a>
-                    <a asp-controller="Booking" asp-action="DeleteBooking" asp-route-id="@booking.BookingId" class="btn btn-danger">Delete</a>
+                    @if (booking.StartDate >= DateTime.Now)
+                    {
+                        <a asp-controller="Booking" asp-action="DetailsBooking" asp-route-id="@booking.BookingId" class="btn btn-info">Details</a>
+                        <a asp-controller="Booking" asp-action="EditBooking" asp-route-id="@booking.BookingId" class="btn btn-warning">Edit</a>
+                        <form asp-action="DeleteBooking" asp-controller="Booking" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    }
                 </td>
             </tr>
         }

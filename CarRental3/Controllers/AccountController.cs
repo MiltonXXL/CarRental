@@ -6,22 +6,21 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarRental3.Controllers
 {
-    public class AccountController : Controller
-    {
-        private readonly IUser userRepository;
+    //    public class AccountController : Controller
+    //    {
+    //        private readonly IUser userRepository;
 
-        public AccountController(IUser userRepository)
-        {
-            this.userRepository = userRepository;
-        }
-        // GET: AccountController
-        public ActionResult Index()
-        {
-            return View();
-        }
+    //        public AccountController(IUser userRepository)
+    //        {
+    //            this.userRepository = userRepository;
+    //        }
+    //        // GET: AccountController
+    //        public ActionResult Index()
+    //        {
+    //            return View();
+    //        }
 
-    }
+    //    }
 }
 
 
-       

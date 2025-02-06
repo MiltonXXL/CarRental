@@ -1,0 +1,29 @@
+﻿@model CarRental3.ViewModels.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register";
+}
+
+<h1>Register</h1>
+
+<form asp-action="Register" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label asp-for="RegisterUserName" class="control-label">User Name</label>
+        <input asp-for="RegisterUserName" class="form-control" />
+        <span asp-validation-for="RegisterUserName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="RegisterPassword" class="control-label">Password</label>
+        <input asp-for="RegisterPassword" class="form-control" type="password" />
+        <span asp-validation-for="RegisterPassword" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <input type="hidden" asp-for="CarId" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>

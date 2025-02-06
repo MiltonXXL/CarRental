@@ -16,7 +16,7 @@ namespace CarRental3.Controllers
         }
 
         [HttpGet]
-        public IActionResult LoginOrRegister(int? carId = null)
+        public IActionResult LoginOrRegister(int carId)
         {
             var model = new LoginOrRegisterViewModel
             {
@@ -25,11 +25,21 @@ namespace CarRental3.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public IActionResult Login(int? carId)
+        {
+            var model = new LoginViewModel
+            {
+                CarId = carId
+            };
+            return View(model);
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult LoginOrRegister(LoginOrRegisterViewModel model, string actionType)
+        public IActionResult Login(LoginViewModel model)
         {
-            if (actionType == "Login")
+            if (ModelState.IsValid)
             {
                 var user = userRepository.GetByUserNameAndPassword(model.UserName, model.Password);
                 if (user != null)
@@ -56,7 +66,25 @@ namespace CarRental3.Controllers
                 }
                 ModelState.AddModelError("", "Felaktigt användarnamn eller lösenord");
             }
-            else if (actionType == "Register")
+
+            return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Register(int? carId)
+        {
+            var model = new RegisterViewModel
+            {
+                CarId = carId
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
             {
                 var existingUser = userRepository.GetByUserName(model.RegisterUserName);
                 if (existingUser != null)
@@ -87,7 +115,11 @@ namespace CarRental3.Controllers
                 return RedirectToAction("UserDashBoard", "User");
             }
 
-            return View(model);
+            var loginOrRegisterModel = new LoginOrRegisterViewModel
+            {
+                CarId = model.CarId
+            };
+            return View("LoginOrRegister", loginOrRegisterModel);
         }
     }
 }

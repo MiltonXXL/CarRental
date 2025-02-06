@@ -21,12 +21,11 @@ body {
     margin-bottom: 60px;
 }
 
-/* Centrera navigationbaren */
 .navbar {
     display: flex;
     justify-content: center;
-    background-color: #f8f9fa; /* Bakgrundsfärg för navigationbaren */
-    padding: 10px; /* Padding för navigationbaren */
+    background-color: #f8f9fa; /* Bakgrundsfärg */
+    padding: 10px; /* Padding */
 }
 
 .navbar-nav {
@@ -41,7 +40,7 @@ body {
     margin: 0 10px;
 }
 
-/* Centrera innehållet */
+/* Centrera innehåll */
 .content-container {
     display: flex;
     flex-direction: column;
@@ -49,12 +48,12 @@ body {
     text-align: center;
 }
 
-/* Centrera titeln */
+/* Centrera titel */
 .centered-title {
     text-align: center;
 }
 
-/* Centrera bilden */
+/* Centrera bild */
 .centered-image {
     display: block;
     margin: 0 auto;

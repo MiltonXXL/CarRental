@@ -113,7 +113,7 @@ namespace CarRental3.Controllers
             // Skapa bokning
             var booking = new Booking
             {
-                CarId = viewModel.CarId,
+                CarId = viewModel.CarId.GetValueOrDefault(),
                 UserId = userId.Value,
                 // Lägg till mer data om det behövs
             };
@@ -167,8 +167,8 @@ namespace CarRental3.Controllers
 
             var user = new User
             {
-                UserName = registerVM.UserName,
-                Password = registerVM.Password,
+                UserName = registerVM.RegisterUserName,
+                Password = registerVM.RegisterPassword,
                 IsAdmin = false
             };
             userRepository.Add(user);

@@ -117,8 +117,26 @@ namespace CarRental3.Controllers
                 // Lägg till den nya bokningen till databasen
                 bookingRepository.Add(newBooking);
 
-                // Omdirigera till admin-dashboard eller en annan vy när bokningen har skapats
+            // Kontrollera användarens roll för att omdirigera till rätt dashboard
+            var userRole = HttpContext.Session.GetString("UserRole");
+            if (userRole == "Admin")
+            {
+                return RedirectToAction("AdminDashBoard", "Admin");
+            }
+            else
+            {
                 return RedirectToAction("UserDashBoard", "User");
+            }
+        }
+
+        [HttpGet]
+        public IActionResult BackToDashboard(string userRole)
+        {
+            if (userRole == "Admin")
+            {
+                return RedirectToAction("AdminDashBoard", "Admin");
+            }
+            return RedirectToAction("UserDashBoard", "User");
         }
 
         public IActionResult EditBooking(int id)

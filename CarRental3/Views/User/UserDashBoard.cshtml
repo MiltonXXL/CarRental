@@ -2,9 +2,17 @@
 
 @{
     ViewData["Title"] = "User Dashboard";
+    var userId = Context.Session.GetInt32("UserId");
 }
 
 <h1>User Dashboard</h1>
+
+@if (!string.IsNullOrEmpty(ViewData["ErrorMessage"]?.ToString()))
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
 
 <p>Welcome to your dashboard!</p>
 
@@ -25,10 +33,14 @@
                 <td>@booking.StartDate.ToShortDateString()</td>
                 <td>@booking.EndDate.ToShortDateString()</td>
                 <td>
-                    @if (booking.EndDate >= DateTime.Now)
+                    @if (booking.StartDate >= DateTime.Now)
                     {
                         <a asp-controller="Booking" asp-action="EditBooking" asp-route-id="@booking.BookingId" class="btn btn-primary">Edit</a>
-                        <a asp-controller="Booking" asp-action="DeleteBooking" asp-route-id="@booking.BookingId" class="btn btn-danger">Delete</a>
+                        <form asp-action="DeleteBooking" asp-controller="Booking" method="post" style="display:inline;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="bookingId" value="@booking.BookingId" />
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
                     }
                     else
                     {
@@ -40,4 +52,4 @@
     </tbody>
 </table>
 
-<a asp-controller="Car" asp-action="AvailableCars" class="btn btn-success">Create New Booking</a>
+

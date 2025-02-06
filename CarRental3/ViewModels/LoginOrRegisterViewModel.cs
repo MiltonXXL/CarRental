@@ -10,5 +10,7 @@ namespace CarRental3.ViewModels
 
         public string RegisterUserName { get; set; }
         public string RegisterPassword { get; set; }
+
+
     }
 }

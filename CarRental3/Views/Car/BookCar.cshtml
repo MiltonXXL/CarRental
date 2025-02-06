@@ -47,16 +47,16 @@
 
             <!-- UserName for Registration -->
             <div class="form-group">
-                <label asp-for="RegisterViewModel.UserName" class="control-label"></label>
-                <input asp-for="RegisterViewModel.UserName" type="text" class="form-control" />
-                <span asp-validation-for="RegisterViewModel.UserName" class="text-danger"></span>
+                <label asp-for="RegisterViewModel.RegisterUserName" class="control-label"></label>
+                <input asp-for="RegisterViewModel.RegisterUserName" type="text" class="form-control" />
+                <span asp-validation-for="RegisterViewModel.RegisterUserName" class="text-danger"></span>
             </div>
 
             <!-- Password for Registration -->
             <div class="form-group">
-                <label asp-for="RegisterViewModel.Password" class="control-label"></label>
-                <input asp-for="RegisterViewModel.Password" type="password" class="form-control" autocomplete="off" />
-                <span asp-validation-for="RegisterViewModel.Password" class="text-danger"></span>
+                <label asp-for="RegisterViewModel.RegisterPassword" class="control-label"></label>
+                <input asp-for="RegisterViewModel.RegisterPassword" type="password" class="form-control" autocomplete="off" />
+                <span asp-validation-for="RegisterViewModel.RegisterPassword" class="text-danger"></span>
             </div>
 
             <!-- Hidden CarId for Registration -->

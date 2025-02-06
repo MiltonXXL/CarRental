@@ -2,7 +2,7 @@
 {
     public class BookCarViewModel
     {
-        public int CarId { get; set; }
+        public int? CarId { get; set; }
         public AvailableCarsLoginViewModel LoginViewModel { get; set; }
         public RegisterViewModel RegisterViewModel { get; set; }
     }
