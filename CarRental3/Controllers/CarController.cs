@@ -185,26 +185,6 @@ namespace CarRental3.Controllers
             return View(availableCars);
         }
 
-
-
-        public IActionResult BookCar(int id)
-        {
-            var car = carRepository.GetById(id);
-            if (car == null)
-            {
-                return NotFound();
-            }
-
-            var viewModel = new BookCarViewModel
-            {
-                CarId = car.CarId,
-                LoginViewModel = new AvailableCarsLoginViewModel { CarId = car.CarId },
-                RegisterViewModel = new RegisterViewModel { CarId = car.CarId }
-            };
-
-            return View(viewModel);
-        }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ConfirmBooking(BookCarViewModel bookCarVM)

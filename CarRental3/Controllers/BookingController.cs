@@ -25,7 +25,7 @@ namespace CarRental3.Controllers
         }
         public IActionResult DetailsBooking(int id)
         {
-            var booking = bookingRepository.GetById(id); // Hämtar en Booking-modell
+            var booking = bookingRepository.GetById(id); 
             if (booking == null)
             {
                 return NotFound();
@@ -247,7 +247,7 @@ namespace CarRental3.Controllers
             }
 
             var userId = HttpContext.Session.GetInt32("UserId");
-            if (userId == null || booking.UserId != userId)
+            if (userId == null || (!userRepository.GetById(userId.Value).IsAdmin && booking.UserId != userId))
             {
                 return RedirectToAction("AccessDenied", "Home");
             }

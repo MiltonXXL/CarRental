@@ -14,7 +14,7 @@ namespace CarRental3
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<ApplicationDbContext>(options => 
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
-            builder.Services.AddTransient<IAdministrator, AdministratorRepository>();
+            //builder.Services.AddTransient<IAdministrator, AdministratorRepository>();
             builder.Services.AddTransient<IBooking, BookingRepository>();
             builder.Services.AddTransient<IUser, UserRepository>();
             builder.Services.AddTransient<ICar, CarRepository>();
