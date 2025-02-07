@@ -14,7 +14,7 @@
     </div>
 }
 
-<!-- Section for Users -->
+<!-- Users -->
 <h2>Users</h2>
 <p>
     <a asp-controller="User" asp-action="CreateUser" class="btn btn-primary">Create New User</a>
@@ -22,7 +22,7 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Username</th>
+            <th>Email</th>
             <th>Password</th>
             <th>Is Admin</th>
             <th>Actions</th>
@@ -32,7 +32,7 @@
         @foreach (var user in Model.Users)
         {
             <tr>
-                <td>@user.UserName</td>
+                <td>@user.Email</td>
                 <td>@user.Password</td>
                 <td>@user.IsAdmin</td>
                 <td>
@@ -49,7 +49,7 @@
     </tbody>
 </table>
 
-<!-- Section for Cars -->
+<!-- Cars -->
 <h2>Cars</h2>
 <p>
     <a asp-controller="Car" asp-action="CreateCar" class="btn btn-primary">Create New Car</a>
@@ -88,7 +88,7 @@
     </tbody>
 </table>
 
-<!-- Section for Bookings -->
+<!-- Bookings -->
 <h2>Bookings</h2>
 <p>
     <a asp-controller="Booking" asp-action="CreateBooking" asp-route-carId="@Model.Cars.First().CarId" asp-route-userId="@userId" class="btn btn-primary">Create New Booking</a>
@@ -110,17 +110,15 @@
                 <td>@booking.StartDate.ToString("yyyy-MM-dd")</td>
                 <td>@booking.EndDate.ToString("yyyy-MM-dd")</td>
                 <td>@booking.Car.Brand @booking.Car.Model</td>
-                <td>@booking.User.UserName</td>
+                <td>@booking.User.Email</td>
                 <td>
                     @if (booking.StartDate >= DateTime.Now)
                     {
                         <a asp-controller="Booking" asp-action="DetailsBooking" asp-route-id="@booking.BookingId" class="btn btn-info">Details</a>
                         <a asp-controller="Booking" asp-action="EditBooking" asp-route-id="@booking.BookingId" class="btn btn-warning">Edit</a>
-                        <form asp-action="DeleteBooking" asp-controller="Booking" method="post" style="display:inline;">
+                        <a asp-controller="Booking" asp-action="DeleteBooking" asp-route-id="@booking.BookingId" class="btn btn-danger">Delete</a>
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="bookingId" value="@booking.BookingId" />
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
                     }
                 </td>
             </tr>

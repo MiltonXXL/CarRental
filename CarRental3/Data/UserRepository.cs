@@ -25,7 +25,7 @@ namespace CarRental3.Data
 
         public IEnumerable<User> GetAll()
         {
-            return (dbContext.Users.OrderBy(u => u.UserName));
+            return (dbContext.Users.OrderBy(u => u.Email));
         }
 
         public User GetById(int id)
@@ -35,12 +35,12 @@ namespace CarRental3.Data
 
         public User GetByUserNameAndPassword(string userName, string password)
         {
-            return dbContext.Users.FirstOrDefault(u => u.UserName == userName && u.Password == password);
+            return dbContext.Users.FirstOrDefault(u => u.Email == userName && u.Password == password);
         }
 
         public User GetByUserName(string userName)
         {
-            return dbContext.Users.FirstOrDefault(u => u.UserName == userName);
+            return dbContext.Users.FirstOrDefault(u => u.Email == userName);
         }
 
         public void Update(User user)

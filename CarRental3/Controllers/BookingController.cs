@@ -9,8 +9,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CarRental3.Controllers
 {
-    //[Route("Admin/[controller]/[action]")]
-    //[Authorize(Roles = "Admin")]
     public class BookingController : Controller
     {
         private readonly IBooking bookingRepository;
@@ -31,16 +29,14 @@ namespace CarRental3.Controllers
                 return NotFound();
             }
 
-            // Mappa från Booking till BookingDetailsViewModel
             var viewModel = new BookingDetailsViewModel
             {
                 Booking = booking,
                 User = booking.User,
                 Car = booking.Car
-                // Lägg till alla andra nödvändiga egenskaper från Booking till BookingDetailsViewModel
             };
 
-            return View(viewModel); // Skicka rätt ViewModel till vyn
+            return View(viewModel); 
         }
 
         public IActionResult CreateBooking(int carId, int userId)
@@ -75,37 +71,31 @@ namespace CarRental3.Controllers
                 Users = userRepository.GetAll().Select(u => new SelectListItem
                 {
                     Value = u.UserId.ToString(),
-                    Text = u.UserName
+                    Text = u.Email
                 }).ToList()
             };
 
             return View(bookingVM);
         }
 
-
-
-        // POST: BookingController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult CreateBooking(BookingViewModel bookingVM)
         {
-            // Endast inloggade användare kan boka bilar
             if (HttpContext.Session.GetInt32("UserId") == null)
             {
                 return RedirectToAction("LoginOrRegister", "Auth");
             }
 
-            // Hämta vald bil och användare från repository baserat på ID
             var selectedCar = carRepository.GetById(bookingVM.CarId);
                 var selectedUser = userRepository.GetById(bookingVM.UserId);
 
                 if (selectedCar == null || selectedUser == null)
                 {
                     ModelState.AddModelError("", "Invalid car or user selection.");
-                    return View(bookingVM); // Visa formuläret igen om något är fel
+                    return View(bookingVM); 
                 }
 
-                // Skapa en ny bokning med de inskickade värdena
                 var newBooking = new Booking
                 {
                     CarId = bookingVM.CarId,
@@ -114,10 +104,8 @@ namespace CarRental3.Controllers
                     EndDate = bookingVM.EndDate
                 };
 
-                // Lägg till den nya bokningen till databasen
                 bookingRepository.Add(newBooking);
 
-            // Kontrollera användarens roll för att omdirigera till rätt dashboard
             var userRole = HttpContext.Session.GetString("UserRole");
             if (userRole == "Admin")
             {
@@ -160,7 +148,7 @@ namespace CarRental3.Controllers
             }
 
             var car = carRepository.GetById(booking.CarId) ?? new Car { Brand = "Unknown Car" };
-            var user = userRepository.GetById(booking.UserId) ?? new User { UserName = "Unknown User" };
+            var user = userRepository.GetById(booking.UserId) ?? new User { Email = "Unknown User" };
 
             var bookingVM = new BookingViewModel
             {
@@ -179,7 +167,7 @@ namespace CarRental3.Controllers
                 Users = userRepository.GetAll().Select(u => new SelectListItem
                 {
                     Value = u.UserId.ToString(),
-                    Text = u.UserName
+                    Text = u.Email
                 }).ToList()
             };
 
@@ -216,14 +204,12 @@ namespace CarRental3.Controllers
 
             bookingRepository.Update(booking);
 
-            // Hämta användaren från användar-ID
             var user = userRepository.GetById(userId.Value);
             if (user == null)
             {
                 return RedirectToAction("LoginOrRegister", "Auth");
             }
 
-            // Kontrollera om användaren är admin och omdirigera till rätt dashboard
             if (user.IsAdmin)
             {
                 return RedirectToAction("AdminDashBoard", "Admin");
@@ -233,9 +219,6 @@ namespace CarRental3.Controllers
                 return RedirectToAction("UserDashBoard", "User");
             }
         }
-
-
-
 
         [HttpGet]
         public IActionResult DeleteBooking(int id)
@@ -261,7 +244,7 @@ namespace CarRental3.Controllers
             return View(booking);
         }
 
-        [HttpPost, ActionName("DeleteBooking")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteBookingConfirmed(int bookingId)
         {
@@ -271,7 +254,6 @@ namespace CarRental3.Controllers
                 return NotFound();
             }
 
-            // Kontrollera om bokningen har passerat datumet
             if (booking.StartDate < DateTime.Now)
             {
                 ModelState.AddModelError("", "You cannot delete past bookings.");
@@ -280,21 +262,18 @@ namespace CarRental3.Controllers
 
             bookingRepository.Delete(booking);
 
-            // Hämta användar-ID från sessionen
             var userId = HttpContext.Session.GetInt32("UserId");
             if (userId == null)
             {
                 return RedirectToAction("LoginOrRegister", "Auth");
             }
 
-            // Hämta användaren från användar-ID
             var user = userRepository.GetById(userId.Value);
             if (user == null)
             {
                 return RedirectToAction("LoginOrRegister", "Auth");
             }
 
-            // Kontrollera om användaren är admin och omdirigera till rätt dashboard
             if (user.IsAdmin)
             {
                 return RedirectToAction("AdminDashBoard", "Admin");

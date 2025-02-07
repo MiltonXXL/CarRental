@@ -16,7 +16,6 @@ namespace CarRental3.Controllers
             this.carRepository = carRepository;
             this.bookingRepository = bookingRepository;
         }
-        // GET: CarController
         public ActionResult Index()
         {
             return View();
@@ -29,7 +28,6 @@ namespace CarRental3.Controllers
             {
                 return RedirectToAction("AccessDenied", "Home");
             }
-            // Returnera en vy för att skapa en bil
             return View();
         }
 
@@ -44,7 +42,6 @@ namespace CarRental3.Controllers
 
             if (ModelState.IsValid)
             {
-                // Mappa CarViewModel till Car-modellen
                 var car = new Car
                 {
                     Brand = carVM.Brand,
@@ -52,22 +49,13 @@ namespace CarRental3.Controllers
                     YearModel = carVM.YearModel,
                     CostPerDay = carVM.CostPerDay,
                     ImageUrl = !string.IsNullOrEmpty(carVM.ImageUrl) ? carVM.ImageUrl : "/images/cars/default_car.jpg"
-                    // Fyll på fler egenskaper här om det behövs
                 };
-
-                // Spara bilen i databasen genom repositoryt
                 carRepository.Add(car);
-
-                // Omdirigera till en vy (t.ex. indexsidan för bilar)
                 return RedirectToAction("AdminDashBoard", "Admin");
             }
-
-            // Om modellens tillstånd inte är giltigt, visa samma vy igen med det inskickade datat
             return View(carVM);
         }
 
-
-        // GET: CarController/Details/5
         public IActionResult DetailsCar(int id)
         {
             var car = carRepository.GetById(id);
@@ -91,7 +79,6 @@ namespace CarRental3.Controllers
                 return NotFound();
             }
 
-            // Mappa Car-modellen till CarViewModel
             var carVM = new CarViewModel
             {
                 CarId = car.CarId,
@@ -99,9 +86,8 @@ namespace CarRental3.Controllers
                 Model = car.Model,
                 YearModel = car.YearModel,
                 CostPerDay = car.CostPerDay,
-                ImageUrl = car.ImageUrl // Inkludera bild-URL
+                ImageUrl = car.ImageUrl 
             };
-
             return View(carVM);
         }
 
@@ -116,31 +102,23 @@ namespace CarRental3.Controllers
 
             if (ModelState.IsValid)
             {
-                // Hämta bilen från databasen
                 var car = carRepository.GetById(carVM.CarId);
                 if (car == null)
                 {
                     return NotFound();
                 }
 
-                // Uppdatera bilens egenskaper
                 car.Brand = carVM.Brand;
                 car.Model = carVM.Model;
                 car.YearModel = carVM.YearModel;
                 car.CostPerDay = carVM.CostPerDay;
-                car.ImageUrl = carVM.ImageUrl; // Uppdatera bild-URL
+                car.ImageUrl = carVM.ImageUrl; 
 
-                // Spara ändringarna i databasen genom repositoryt
                 carRepository.Update(car);
-
-                // Omdirigera till AdminDashBoard efter att ha redigerat en bil
                 return RedirectToAction("AdminDashBoard", "Admin");
             }
-
-            // Om modellens tillstånd inte är giltigt, visa samma vy igen med det inskickade datat
             return View(carVM);
         }
-
 
         [HttpPost, ActionName("DeleteCarConfirmed")]
         [ValidateAntiForgeryToken]
@@ -150,26 +128,20 @@ namespace CarRental3.Controllers
             {
                 return RedirectToAction("AccessDenied", "Home");
             }
-
-            // Kontrollera om bilen har en aktiv eller framtida bokning
             if (carRepository.HasActiveOrFutureBooking(CarId))
             {
-                // Lägg till ett felmeddelande om bilen inte kan tas bort
                 TempData["ErrorMessage"] = "Bilen kan inte tas bort eftersom den är bokad.";
                 return RedirectToAction("AdminDashBoard", "Admin");
             }
 
-            // Om ingen aktiv eller framtida bokning finns, tillåt borttagning
             var car = carRepository.GetById(CarId);
             if (car == null)
             {
                 return NotFound();
             }
-
             carRepository.Delete(car);
             return RedirectToAction("AdminDashBoard", "Admin");
         }
-
 
         public IActionResult AvailableCars()
         {
@@ -189,7 +161,6 @@ namespace CarRental3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult ConfirmBooking(BookCarViewModel bookCarVM)
         {
-            // Logik för att bekräfta bokning
             return RedirectToAction("MyBookings", "User");
         }
 

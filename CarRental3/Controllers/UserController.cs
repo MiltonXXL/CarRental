@@ -18,7 +18,7 @@ namespace CarRental3.Controllers
             this.carRepository = carRepository;
             this.bookingRepository = bookingRepository;
         }
-        // GET: UserController
+
         public ActionResult Index()
         {
             return View();
@@ -38,8 +38,8 @@ namespace CarRental3.Controllers
             {
                 UserId = userId.Value,
                 Bookings = bookings,
-                Cars = bookingRepository.GetAllCars(), // För att få alla bilar
-                NewBooking = new Booking() // Skapa ett nytt Booking-objekt om det behövs
+                Cars = bookingRepository.GetAllCars(),
+                NewBooking = new Booking() 
             };
 
             return View(model);
@@ -48,10 +48,8 @@ namespace CarRental3.Controllers
         [HttpGet]
         public IActionResult CreateUser()
         {
-            // Returnera en vy för att skapa en bil
             return View();
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -61,20 +59,16 @@ namespace CarRental3.Controllers
             {
                 var user = new User
                 {
-                    UserName = userVM.UserName,
+                    Email = userVM.Email,
                     Password = userVM.Password,
                     IsAdmin = userVM.IsAdmin,
                 };
                 userRepository.Add(user);
-
-                return RedirectToAction("Index", "Admin");
+                return RedirectToAction("AdminDashBoard", "Admin");
             }
-
-            // Om modellens tillstånd inte är giltigt, visa samma vy igen med det inskickade datat
             return View(userVM);
         }
 
-        // Metoder för att hantera användare
         public IActionResult DetailsUser(int id)
         {
             var user = userRepository.GetById(id);
@@ -104,7 +98,7 @@ namespace CarRental3.Controllers
                 var existingUser = userRepository.GetById(user.UserId);
                 if (existingUser != null)
                 {
-                    existingUser.UserName = user.UserName;
+                    existingUser.Email = user.Email;
                     existingUser.Password = user.Password;
                     existingUser.IsAdmin = user.IsAdmin;
 
@@ -116,9 +110,9 @@ namespace CarRental3.Controllers
             return View(user);
         }
 
-        public IActionResult DeleteUser(int id)
+        public IActionResult DeleteUser(int Userid)
         {
-            var user = userRepository.GetById(id);
+            var user = userRepository.GetById(Userid);
             if (user == null)
             {
                 return NotFound();

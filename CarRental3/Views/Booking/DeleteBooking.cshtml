@@ -30,10 +30,10 @@
             @Html.DisplayFor(model => model.Car.Model)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.User.UserName)
+            @Html.DisplayNameFor(model => model.User.Email)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.User.UserName)
+            @Html.DisplayFor(model => model.User.Email)
         </dd>
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.StartDate)
@@ -50,9 +50,9 @@
     </dl>
 </div>
 
-<form asp-action="DeleteBooking" method="post">
+<form asp-action="DeleteBookingConfirmed" method="post">
     @Html.AntiForgeryToken()
-    <input type="hidden" asp-for="BookingId" />
+    <input type="hidden" asp-for="BookingId" value="@Model.BookingId" />
     <div class="form-group">
         <input type="submit" value="Delete" class="btn btn-danger" />
         <a asp-action="UserDashBoard" class="btn btn-secondary">Cancel</a>

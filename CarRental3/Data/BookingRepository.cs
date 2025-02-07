@@ -50,7 +50,6 @@ namespace CarRental3.Data
                        .Include(b => b.User) // Ladda relaterad User
                        .FirstOrDefault(b => b.BookingId == id);
         }
-
         public IEnumerable<Booking> GetByUserId(int userId)
         {
             return dbContext.Bookings

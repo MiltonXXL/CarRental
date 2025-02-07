@@ -19,7 +19,7 @@ namespace CarRental3.Models
         [Required]
         public int UserId { get; set; }
 
-        // Navigerings-egenskaper
+
         public Car Car { get; set; }
         public User User { get; set; }
     }

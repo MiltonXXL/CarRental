@@ -36,11 +36,9 @@
                     @if (booking.StartDate >= DateTime.Now)
                     {
                         <a asp-controller="Booking" asp-action="EditBooking" asp-route-id="@booking.BookingId" class="btn btn-primary">Edit</a>
-                        <form asp-action="DeleteBooking" asp-controller="Booking" method="post" style="display:inline;">
+                        <a asp-controller="Booking" asp-action="DeleteBooking" asp-route-id="@booking.BookingId" class="btn btn-danger">Delete</a>
                             @Html.AntiForgeryToken()
                             <input type="hidden" name="bookingId" value="@booking.BookingId" />
-                            <button type="submit" class="btn btn-danger">Delete</button>
-                        </form>
                     }
                     else
                     {

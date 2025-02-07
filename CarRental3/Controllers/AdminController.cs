@@ -19,7 +19,6 @@ namespace CarRental3.Controllers
             this.bookingRepository = bookingRepository;
         }
 
-        // GET: AdminController
         public IActionResult AdminDashBoard()
         {
             var users = userRepository.GetAll();

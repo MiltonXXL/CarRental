@@ -13,7 +13,6 @@ namespace CarRental3.Controllers
         private readonly IUser userRepository;
         private readonly ICar carRepository;
         private readonly IBooking bookingRepository;
-
         public HomeController(ILogger<HomeController> logger, IUser userRepository, ICar carRepository, IBooking bookingRepository)
         {
             this.logger = logger;
@@ -51,12 +50,10 @@ namespace CarRental3.Controllers
             return View(viewModel);
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult AvailableCarsLogin([Bind("UserName", "Password")]AvailableCarsLoginViewModel loginVM, string returnUrl = null)
         {
-         
             var user = userRepository.GetByUserNameAndPassword(loginVM.UserName, loginVM.Password);
             if (user != null)
             {
@@ -77,6 +74,7 @@ namespace CarRental3.Controllers
                     return RedirectToAction("UserDashBoard", "User");
                 }
             }
+
             ModelState.AddModelError("", "Invalid username or password");
             var loginViewModelInvalid = new AvailableCarsLoginViewModel
             {
@@ -96,7 +94,7 @@ namespace CarRental3.Controllers
                 RegisterViewModel = new RegisterViewModel { CarId = id }
             };
 
-            return View(viewModel); // Använd BookCar-vyn
+            return View(viewModel); 
         }
 
         [HttpPost]
@@ -106,20 +104,16 @@ namespace CarRental3.Controllers
             var userId = HttpContext.Session.GetInt32("UserId");
             if (!userId.HasValue)
             {
-                // Om användaren inte är inloggad, omdirigera till inloggningssidan
                 return RedirectToAction("AvailableCarsLogin", new { returnUrl = Url.Action("BookCar", new { id = viewModel.CarId }) });
             }
 
-            // Skapa bokning
             var booking = new Booking
             {
                 CarId = viewModel.CarId.GetValueOrDefault(),
                 UserId = userId.Value,
-                // Lägg till mer data om det behövs
             };
 
             bookingRepository.Add(booking);
-
             return RedirectToAction("BookingConfirmation", new { bookingId = booking.CarId });
         }
 
@@ -127,11 +121,6 @@ namespace CarRental3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult HomeLogin(HomeLoginViewModel loginVM, string returnUrl = null)
         {
-            //if (!ModelState.IsValid)
-            //{
-            //    return View("Login", loginVM);
-            //}
-
             var user = userRepository.GetByUserNameAndPassword(loginVM.UserName, loginVM.Password);
             if (user != null)
             {
@@ -167,7 +156,7 @@ namespace CarRental3.Controllers
 
             var user = new User
             {
-                UserName = registerVM.RegisterUserName,
+                Email = registerVM.RegisterUserName,
                 Password = registerVM.RegisterPassword,
                 IsAdmin = false
             };

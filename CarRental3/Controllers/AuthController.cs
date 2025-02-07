@@ -41,12 +41,12 @@ namespace CarRental3.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = userRepository.GetByUserNameAndPassword(model.UserName, model.Password);
+                var user = userRepository.GetByUserNameAndPassword(model.Email, model.Password);
                 if (user != null)
                 {
                     // Spara användarinformationen i sessionen
                     HttpContext.Session.SetInt32("UserId", user.UserId);
-                    HttpContext.Session.SetString("UserName", user.UserName);
+                    HttpContext.Session.SetString("UserName", user.Email);
                     HttpContext.Session.SetString("UserRole", user.IsAdmin ? "Admin" : "User");
 
                     // Kontrollera om användaren är admin
@@ -95,7 +95,7 @@ namespace CarRental3.Controllers
 
                 var newUser = new User
                 {
-                    UserName = model.RegisterUserName,
+                    Email = model.RegisterUserName,
                     Password = model.RegisterPassword,
                     IsAdmin = false  // Standardvärde för nya användare
                 };
@@ -104,7 +104,7 @@ namespace CarRental3.Controllers
 
                 // Spara användarinformationen i sessionen
                 HttpContext.Session.SetInt32("UserId", newUser.UserId);
-                HttpContext.Session.SetString("UserName", newUser.UserName);
+                HttpContext.Session.SetString("UserName", newUser.Email);
                 HttpContext.Session.SetString("UserRole", "User");
 
                 // Direkt till bokning efter registrering

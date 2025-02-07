@@ -9,6 +9,6 @@ namespace CarRental3.ViewModels
         [Required]
         public string RegisterPassword { get; set; }
 
-        public int? CarId { get; set; } // Lägg till CarId för att bevara bilens ID
+        public int? CarId { get; set; } 
     }
 }
